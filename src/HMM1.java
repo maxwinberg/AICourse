@@ -68,7 +68,6 @@ public class HMM1 {
             System.out.println();
         }
     }
-
     public void function(){
 
     }
@@ -94,4 +93,5 @@ public class HMM1 {
         }
         */
     }
+
 }
