@@ -8,9 +8,9 @@ public class HMM1 {
 
     private int n;
     private int k;
-    private double[][] A;
-    private double[][] B;
-    private double[][] pi;
+    private float[][] A;
+    private float[][] B;
+    private float[][] pi;
 
     public HMM1(){
 
@@ -30,7 +30,7 @@ public class HMM1 {
             printMatrix(B);
             System.out.println("hej5");
             printMatrix(pi);
-            double[][] results = MatrixHandler.multiplyMatrix(MatrixHandler.multiplyMatrix(pi, A), B);
+            float[][] results = (float[][])(MatrixHandler.multiplyMatrix(MatrixHandler.multiplyMatrix(pi, A), B));
             printMatrix(results);
 
 
@@ -39,7 +39,7 @@ public class HMM1 {
         }
     }
 
-    public double[][] retrieveMatrix(Scanner scan){
+    public float[][] retrieveMatrix(Scanner scan){
         String[] input = scan.nextLine().split(" ");
         for(int k = 0; k < input.length; k++){
 
@@ -49,17 +49,17 @@ public class HMM1 {
         int columns = Integer.parseInt(input[1]);
 
         //Loading the matrix A
-        double[][] matrix = new double[rows][columns];
+        float[][] matrix = new float[rows][columns];
         for(int i = 0; i < rows; i++){
             for(int j = 0; j < columns; j++){
-                matrix[i][j] = Double.parseDouble(input[(i*columns) + j + 2]);
+                matrix[i][j] = Float.parseFloat(input[(i*columns) + j + 2]);
             }
         }
 
         return matrix;
     }
 
-    public void printMatrix(double[][] matrix){
+    public void printMatrix(float[][] matrix){
 
         for(int i = 0; i < matrix.length; i++){
             for(int j = 0; j < matrix[0].length; j++){

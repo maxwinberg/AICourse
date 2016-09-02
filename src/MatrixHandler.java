@@ -3,10 +3,10 @@
  */
 public class MatrixHandler {
 
-    public static double[][] multiplyMatrix(double[][] firstMatrix, double[][] secondMatrix){
+    public static float[][] multiplyMatrix(float[][] firstMatrix, float[][] secondMatrix){
 
         /* Create another 2d array to store the result using the original arrays' lengths on row and column respectively. */
-        double [][] result = new double[firstMatrix.length][secondMatrix[0].length];
+        float [][] result = new float[firstMatrix.length][secondMatrix[0].length];
 
         /* Loop through each and get product, then sum up and store the value */
         for (int i = 0; i < firstMatrix.length; i++) {
