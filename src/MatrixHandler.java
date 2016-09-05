@@ -23,6 +23,8 @@ public class MatrixHandler {
     }
 
 
+
+
     public static int[] retrieveVector(String[] input){
 
 
@@ -102,4 +104,62 @@ public class MatrixHandler {
         return sum;
     }
 
+    public static int[] viterbi(double[][] delta, int[][] psi, double[][] A, double[][] B, double[][] pi, int[] observations){
+
+        //Initializing the dynamic programming procedure
+        for(int i = 0; i < A.length; i++){
+            delta[0][i] = pi[0][i]*B[i][observations[0]];
+            psi[0][i] = -1;
+        }
+
+        //Recursion calculating the probability and indexes
+        double[] temp = new double[A.length];
+        for(int t = 1; t < observations.length; t++){
+
+            for(int i = 0; i < A.length; i++){
+
+                for(int j = 0; j < A.length; j++){
+                    temp[j] = delta[t-1][j] * A[j][i]*B[i][observations[t]];
+                }
+
+                psi[t][i] = maximumIndex(temp);
+                delta[t][i] = temp[psi[t][i]];
+            }
+        }
+
+        // stop here
+        int [] path= new int[observations.length];
+        path[observations.length-1]= maximumIndex(delta[delta.length-1]);
+
+        // find the path
+
+        for (int t=observations.length-2; t >-1; t--){
+            path[t]=psi[t+1][path[t+1]];
+        }
+
+        MatrixHandler.vectorPrint(path);
+        return path;
+
+    }
+
+
+    public static void vectorPrint(int [] vector){
+        for(int i=0; i< vector.length; i++){
+            System.out.print(vector[i]+" ");
+        }
+    }
+
+    public static int maximumIndex(double[] vector){
+        int biggest = 0;
+        for(int i = 1; i < vector.length; i++){
+            if(vector[biggest] < vector[i]){
+                biggest = i;
+            }
+        }
+        return biggest;
+    }
 }
+
+
+
+
