@@ -1,4 +1,4 @@
-
+import java.util.ArrayList;
 
 /**
  * Created by MaxWinLaptop on 2016-09-02.
@@ -24,9 +24,7 @@ public class MatrixHandler {
 
 
 
-
     public static int[] retrieveVector(String[] input){
-
 
         /*
         for(int k = 0; k < input.length; k++){
@@ -40,6 +38,7 @@ public class MatrixHandler {
 
         return vector;
     }
+
 
 
 
@@ -76,11 +75,161 @@ public class MatrixHandler {
         }
     }
 
-    public static double alpha(double[][] probabilities, double[][] A, double[][] B, double[][] pi, int[] observations){
+    public static void outputMatrix(double[][] matrix) {
+        System.out.print(matrix.length + " " + matrix[0].length + " ");
+        for (int i = 0; i < matrix.length; i++) {
+            for (int j = 0; j < matrix[0].length; j++) {
+                System.out.print(matrix[i][j] + " ");
+            }
+        }
+        System.out.println();
+    }
+
+    public static double[][] trainAMatrix(ArrayList<double[][]> digamma, double[][] gamma){
+        double[][] trainedAMatrix = new double[digamma.get(0).length][digamma.get(0).length];
+        double digammaSum, gammaSum;
+        for(int i = 0; i < digamma.get(0).length; i++){
+            for(int j = 0; j < digamma.get(0).length; j++){
+                digammaSum = gammaSum = 0;
+                for(int t = 0; t < digamma.size(); t++){
+                    digammaSum += digamma.get(t)[i][j];
+                    gammaSum += gamma[t][i];
+                }
+
+                trainedAMatrix[i][j]=digammaSum/gammaSum;
+
+            }
+        }
+        return  trainedAMatrix;
+
+    }
+
+
+    public static double indicatior(Boolean input){
+        if(input ==true){
+            return 1.0;
+        }
+        return 0.0;
+    }
+
+    public static double[][] trainBMatrix( double[][] gamma, int[] observations, int K){
+        double[][] trainedBMatrix = new double[gamma[0].length][K];
+        double nSum, gammaSum;
+        for(int j = 0; j < gamma[0].length; j++){
+            for(int k = 0; k < K; k++){
+                nSum = gammaSum = 0;
+                for(int t = 0; t < gamma.length; t++){
+                    nSum += indicatior(observations[t]==k)*gamma[t][j];
+                    gammaSum += gamma[t][j];
+                }
+
+                trainedBMatrix[j][k]=nSum/gammaSum;
+
+            }
+        }
+        return  trainedBMatrix;
+    }
+
+    public static double[][] trainpiMatrix(double[][] gamma){
+        double [][] trainPiMatrix= new double[1][gamma[0].length];
+        for (int i=0; i < gamma[0].length; i++){
+            trainPiMatrix[0][i]=gamma[0][i];
+        }
+        return trainPiMatrix;
+    }
+
+    public static double deltaMax(double[][] m1, double[][] m2){
+        double[][] delta = new double[m1.length][m1[0].length];
+        double max=0;
+        for(int row = 0; row < m1.length; row++){
+            for(int column = 0; column < m1[0].length; column++){
+                if(m1[row][column] - m2[row][column]>0) {
+                    delta[row][column] = m1[row][column] - m2[row][column];
+                }else {
+                    delta[row][column] = m2[row][column] - m1[row][column];
+                }
+                if(delta[row][column]>max){
+                    max=delta[row][column];
+                }
+
+            }
+        }
+
+        return max;
+    }
+
+
+    public static ArrayList<double[][]> digamma(double[][] alphaM, double[][] betaM, double[][] A, double[][] B, int[] observations){
+        ArrayList<double[][]> digamma = new ArrayList<double[][]>();
+
+        double alphaSum = 0;
+        for(int k = 0; k < alphaM[0].length; k++){
+            alphaSum += alphaM[observations.length-1][k];
+        }
+
+        for(int t = 0; t < observations.length-1; t++){//Here we took away one
+            digamma.add(t, new double[A.length][A.length]);
+            for(int i = 0; i < A.length; i++){
+                for(int j = 0; j < A.length;j++){
+                    digamma.get(t)[i][j]=(alphaM[t][i]*A[i][j]*B[j][observations[t+1]]*betaM[t+1][j])/alphaSum;
+                }
+
+            }
+        }
+
+        return digamma;
+    }
+
+    public static double[][] gamma(ArrayList<double[][]> digamma){
+
+        double[][] gamma = new double[digamma.size()][digamma.get(0).length];//Matrix T x N
+        double rowSum=0;
+        for(int t = 0; t < digamma.size(); t++){
+            for(int i = 0; i < digamma.get(0).length; i++){
+                rowSum=0;
+                for(int j = 0; j <digamma.get(0).length; j ++){
+                    rowSum=rowSum+digamma.get(t)[i][j];
+                }
+                gamma[t][i]=rowSum;
+
+            }
+        }
+
+        return gamma;
+    }
+
+
+    public static double[][] beta(double[][] A, double[][] B, int[] observations){
+
+        double[][] betaM = new double[observations.length][A.length];
 
         //Initializing the dynamic programming procedure
         for(int i = 0; i < A.length; i++){
-            probabilities[0][i] = pi[0][i] * B[i][observations[0]];
+            betaM[observations.length-1][i] = 1;
+        }
+
+        double sum = 0;
+        for(int t = observations.length-2; t > -1; t--){
+
+            for(int i = 0; i < A.length; i++){
+                sum = 0;
+
+                for(int j = 0; j < A.length; j++){
+                    sum += betaM[t+1][j] * B[j][observations[t+1]] * A[i][j];
+
+                }
+                betaM[t][i] = sum;
+            }
+
+        }
+        return betaM;
+    }
+
+    public static double alpha(double[][] alphaM, double[][] A, double[][] B, double[][] pi, int[] observations){
+
+        //Initializing the dynamic programming procedure
+        for(int i = 0; i < A.length; i++){
+            alphaM[0][i] = pi[0][i] * B[i][observations[0]];
         }
 
         double sum = 0;
@@ -90,16 +239,16 @@ public class MatrixHandler {
                 sum = 0;
 
                 for(int j = 0; j < A.length; j++){
-                    sum += probabilities[t][j] * A[j][i];
+                    sum += alphaM[t][j] * A[j][i];
 
                 }
-                probabilities[t+1][i] = sum * B[i][observations[t+1]];
+                alphaM[t+1][i] = sum * B[i][observations[t+1]];
             }
 
         }
         sum = 0;
-        for(int k = 0; k < probabilities[0].length; k++){
-            sum += probabilities[observations.length-1][k];
+        for(int k = 0; k < alphaM[0].length; k++){
+            sum += alphaM[observations.length-1][k];
         }
         return sum;
     }
