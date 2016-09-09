@@ -25,17 +25,14 @@ public class HMM2 {
         try{
             //Retrieving the input first line which has information about Matrix A
             //Scanner scan = new Scanner(new File("hmm2_01.in"));
-<<<<<<< HEAD
-            Scanner scan = new Scanner(new File("playtime.txt"));
-            A = retrieveMatrix(scan);
-=======
+
             //Scanner scan = new Scanner(System.in);
             //Scanner scan = new Scanner(new File("playtime.txt"));
 
             reader = new BufferedReader(new InputStreamReader(System.in));
 
             A = MatrixHandler.retrieveMatrix(reader.readLine().split(" "));
->>>>>>> origin/master
+
             n = A.length;
             B = MatrixHandler.retrieveMatrix(reader.readLine().split(" "));
             k = B[0].length;
