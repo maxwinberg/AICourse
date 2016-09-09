@@ -24,13 +24,9 @@ public class HMM2 {
 
         try{
             //Retrieving the input first line which has information about Matrix A
-            //Scanner scan = new Scanner(new File("hmm2_01.in"));
 
-            //Scanner scan = new Scanner(System.in);
-            //Scanner scan = new Scanner(new File("playtime.txt"));
 
             reader = new BufferedReader(new InputStreamReader(System.in));
-
             A = MatrixHandler.retrieveMatrix(reader.readLine().split(" "));
 
             n = A.length;
@@ -47,6 +43,7 @@ public class HMM2 {
             double[][] results = (MatrixHandler.multiplyMatrix(MatrixHandler.multiplyMatrix(pi, A), B));
             //printMatrix(results);
             double sum = MatrixHandler.alpha(probabilities, A, B, pi, observations);
+
             System.out.println(sum);
             //System.out.println("The number: " + sum);
             //printMatrix(probabilities);
