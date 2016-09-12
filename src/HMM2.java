@@ -42,7 +42,7 @@ public class HMM2 {
             //printMatrix(pi);
             double[][] results = (MatrixHandler.multiplyMatrix(MatrixHandler.multiplyMatrix(pi, A), B));
             //printMatrix(results);
-            double sum = MatrixHandler.alpha(probabilities, A, B, pi, observations);
+            double sum = MatrixHandler.alpha(probabilities, A, B, pi, observations, new double[observations.length]);
 
             System.out.println(sum);
             //System.out.println("The number: " + sum);

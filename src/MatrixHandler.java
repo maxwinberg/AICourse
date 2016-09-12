@@ -239,13 +239,13 @@ public class MatrixHandler {
     }
 
 
-    public static double[][] beta(double[][] A, double[][] B, int[] observations){
+    public static double[][] beta(double[][] A, double[][] B, int[] observations, double[] c){
 
         double[][] betaM = new double[observations.length][A.length];
 
         //Initializing the dynamic programming procedure
         for(int i = 0; i < A.length; i++){
-            betaM[observations.length-1][i] = 1;
+            betaM[observations.length-1][i] = c[c.length-1];
         }
 
         double sum = 0;
@@ -259,25 +259,34 @@ public class MatrixHandler {
 
                 }
                 betaM[t][i] = sum;
-                if(betaM[t][i]==Double.NaN){
-                    betaM[t][i] = betaM[t+1][i];
-                }
+                betaM[t][i] = c[t]*betaM[t][i];
             }
 
         }
         return betaM;
     }
 
-    public static double alpha(double[][] alphaM, double[][] A, double[][] B, double[][] pi, int[] observations){
+    public static double alpha(double[][] alphaM, double[][] A, double[][] B, double[][] pi, int[] observations, double[] c){
 
         //Initializing the dynamic programming procedure
+        c[0]=0;
+
         for(int i = 0; i < A.length; i++){
             alphaM[0][i] = pi[0][i] * B[i][observations[0]];
+            c[0]=c[0]+alphaM[0][i];
         }
+
+        c[0]=1/c[0];
+
+        for(int i = 0; i < A.length; i++){
+            alphaM[0][i] = c[0]* alphaM[0][i];
+        }
+
+
 
         double sum = 0;
         for(int t = 0; t < observations.length-1; t++){
-
+            c[t+1]=0;
             for(int i = 0; i < A.length; i++){
                 sum = 0;
 
@@ -287,12 +296,41 @@ public class MatrixHandler {
                 }
 
                 alphaM[t+1][i] = sum * B[i][observations[t+1]];
-                if(alphaM[t+1][i]==Double.NaN){
-                    alphaM[t+1][i] = alphaM[t][i];
-                }
+                c[t+1]=c[t+1]+alphaM[t+1][i];
+            }
+            c[t+1]=1/c[t+1];
+            for(int i = 0; i < A.length; i++){
+
+
+                alphaM[t+1][i] = c[t+1]*alphaM[t+1][i];
             }
 
+        }
 
+        sum = 0;
+        for(int k = 0; k < alphaM[0].length; k++){
+            sum += alphaM[observations.length-1][k];
+        }
+        return sum;
+    }
+
+    public static double alphaWithoutNormalization(double[][] alphaM, double[][] A, double[][] B, double[][] pi, int[] observations){
+
+        //Initializing the dynamic programming procedure
+        for(int i = 0; i < A.length; i++){
+            alphaM[0][i] = pi[0][i] * B[i][observations[0]];
+        }
+
+        double sum = 0;
+        for(int t = 0; t < observations.length-1; t++){
+            for(int i = 0; i < A.length; i++){
+                sum = 0;
+
+                for(int j = 0; j < A.length; j++){
+                    sum += alphaM[t][j] * A[j][i];
+                }
+                alphaM[t+1][i] = sum * B[i][observations[t+1]];
+            }
         }
         sum = 0;
         for(int k = 0; k < alphaM[0].length; k++){

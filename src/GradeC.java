@@ -85,10 +85,11 @@ public class GradeC {
 
                 int count = 0;
                 //MatrixHandler.vectorPrint(observations);
+                double[] c = new double[observations.length];
                 do {
                     alphaM = new double[observations.length][A.length];
-                    MatrixHandler.alpha(alphaM, A, B, pi, observations);
-                    double[][] betaM = MatrixHandler.beta(A, B, observations);
+                    MatrixHandler.alpha(alphaM, A, B, pi, observations, c);
+                    double[][] betaM = MatrixHandler.beta(A, B, observations, c);
                     digamma = MatrixHandler.digamma(alphaM, betaM, A, B, observations);
                     //System.out.println("DIGAMMA:");
                     //MatrixHandler.printMatrix(digamma.get(0));

@@ -33,7 +33,7 @@ public class HMM4 {
 
             int[] totalObs = MatrixHandler.retrieveVector(reader.readLine().split(" "));
             int size;
-            if(totalObs.length > 500){
+            if(totalObs.length > 2000){
                 size = 500;
             }else{
                 size = totalObs.length;
@@ -51,12 +51,13 @@ public class HMM4 {
             double[][] newA;
             double[][] newB;
             double[][] newPi;
+            double[] c = new double[observations.length];
             int count = 0;
             //MatrixHandler.vectorPrint(observations);
             do{
                 alphaM = new double[observations.length][A.length];
-                MatrixHandler.alpha(alphaM, A, B, pi, observations);
-                double [][] betaM =MatrixHandler.beta(A, B, observations);
+                MatrixHandler.alpha(alphaM, A, B, pi, observations, c);
+                double [][] betaM =MatrixHandler.beta(A, B, observations, c);
                 digamma = MatrixHandler.digamma(alphaM, betaM, A, B, observations);
                 //System.out.println("DIGAMMA:");
                 //MatrixHandler.printMatrix(digamma.get(0));
@@ -72,10 +73,10 @@ public class HMM4 {
                 A=newA;
                 B = newB;
                 pi = newPi;
-                //System.out.println("Threashold: " + highestThreashold);
+
                 count++;
                 if(count > 100){
-                    System.out.println("Breaking after 1000");
+                    //System.out.println("Breaking after 1000");
                     break;
                 }
 
