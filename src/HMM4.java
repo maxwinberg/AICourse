@@ -30,10 +30,11 @@ public class HMM4 {
             k = B[0].length;
             pi = MatrixHandler.retrieveMatrix(reader.readLine().split(" "));
 
+
             int[] totalObs = MatrixHandler.retrieveVector(reader.readLine().split(" "));
             int size;
-            if(totalObs.length > 535){
-                size = 535;
+            if(totalObs.length > 500){
+                size = 500;
             }else{
                 size = totalObs.length;
             }
@@ -41,6 +42,7 @@ public class HMM4 {
             for(int i = 0; i < observations.length; i++){
                 observations[i] = totalObs[i];
             }
+
 
             double highestThreashold = 0;
             double[][] alphaM;
