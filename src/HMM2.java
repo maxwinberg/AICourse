@@ -25,8 +25,10 @@ public class HMM2 {
         try{
             //Retrieving the input first line which has information about Matrix A
 
+
             reader = new BufferedReader(new InputStreamReader(System.in));
             A = MatrixHandler.retrieveMatrix(reader.readLine().split(" "));
+
             n = A.length;
             B = MatrixHandler.retrieveMatrix(reader.readLine().split(" "));
             k = B[0].length;
